@@ -22,10 +22,10 @@ define apple_package (
     }
   }
 
-  if 'puppet:///' in $source {
+  if 'puppet:///modules/' in $source {
     $remote_package = false
   } else {
-    $remote_package = true
+    $remote_package = false
   }
 
   if $remote_package {
