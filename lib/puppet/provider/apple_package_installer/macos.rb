@@ -1,14 +1,14 @@
 Puppet::Type.type(:apple_package_installer).provide(:macos) do
-  desc 'Installs an Apple package'
-  confine osfamily: 'Darwin'
-  defaultfor operatingsystem: 'Darwin'
+  desc "Installs an Apple package"
+  confine osfamily: "Darwin"
+  defaultfor operatingsystem: "Darwin"
 
-  commands installer: '/usr/sbin/installer'
-  commands pkgutil: '/usr/sbin/pkgutil'
+  commands installer: "/usr/sbin/installer"
+  commands pkgutil: "/usr/sbin/pkgutil"
 
-  require 'puppet/util/plist' if Puppet.features.cfpropertylist?
-  require 'puppet/util/package'
-  require 'digest'
+  require "puppet/util/plist" if Puppet.features.cfpropertylist?
+  require "puppet/util/package"
+  require "digest"
 
   def check_for_install(receipt, version, installs, checksum, force_install, force_downgrade)
     installed = true
@@ -16,18 +16,18 @@ Puppet::Type.type(:apple_package_installer).provide(:macos) do
     return false if force_install == true
 
     # check if receipt is present at all
-    installed_receipts = pkgutil(['--pkgs-plist'])
+    installed_receipts = pkgutil(["--pkgs-plist"])
     installed_receipts = Puppet::Util::Plist.parse_plist(installed_receipts)
     Puppet.debug "#check_for_install installed_receipts: #{installed_receipts}"
     Puppet.debug "#check_for_install receipt: #{receipt}"
     return false unless installed_receipts.include?(receipt)
 
     # check for installed version
-    installed_info = pkgutil(['--pkg-info-plist', receipt])
+    installed_info = pkgutil(["--pkg-info-plist", receipt])
     installed_info = Puppet::Util::Plist.parse_plist(installed_info)
     Puppet.debug "#check_for_install installed_info: #{installed_info}"
     Puppet.debug "#check_for_install version: #{version}"
-    version_result = Puppet::Util::Package.versioncmp(version, installed_info['pkg-version'])
+    version_result = Puppet::Util::Package.versioncmp(version, installed_info["pkg-version"])
     Puppet.debug "#check_for_install versioncmp result: #{version_result}"
     Puppet.debug "#check_for_install force_downgrade: #{force_downgrade}"
     if force_downgrade == true
@@ -68,10 +68,10 @@ Puppet::Type.type(:apple_package_installer).provide(:macos) do
   def create
     installer(
       [
-        '-pkg',
+        "-pkg",
         resource[:package],
-        '-target',
-        '/'
+        "-target",
+        "/",
       ]
     )
   end
